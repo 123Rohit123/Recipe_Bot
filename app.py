@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Set
 import urllib.parse
 
-st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
+                   layout="wide", initial_sidebar_state="expanded")
 # Keep the native sidebar toggle, hide everything else in the toolbar
 # Keep only the left chevron; hide the rest of the toolbar
 st.markdown("""
