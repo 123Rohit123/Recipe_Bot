@@ -4,36 +4,7 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide", initial_sidebar_state="expanded")
-# Keep sidebar ALWAYS visible (fixed), push content right, remove toolbar
-st.markdown("""
-<style>
-/* Always show/fix the sidebar */
-  section[data-testid="stSidebar"] {
-  position: fixed !important;
-  top: 0; left: 0;
-  height: 100vh !important;
-  width: 18rem;                 /* adjust if your sidebar is wider/narrower */
-  display: block !important;
-  visibility: visible !important;
-  z-index: 999;
-}
-
-/* Push main content so it doesn't sit under the sidebar */
-div[data-testid="stAppViewContainer"] {
-  margin-left: 18rem !important;  /* must match the sidebar width above */
-}
-
-/* Optional: tighten main padding a bit */
-.block-container { padding-left: 2rem; padding-right: 2rem; }
-
-/* Remove Streamlit’s top header/toolbar so users can’t collapse the sidebar */
-header, #MainMenu, footer, header [data-testid="stToolbar"] {
-  display: none !important;
-}
-</style>
-""", unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
-
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
 # ----------------------
