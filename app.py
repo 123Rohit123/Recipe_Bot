@@ -3,13 +3,23 @@ from dataclasses import dataclass
 from typing import List, Dict, Set
 import urllib.parse
 
-st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-# --- Hide top-right Streamlit toolbar/menu but keep the sidebar arrow ---
+st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
-    <style>
-        /* Hide hamburger menu and toolbar items on the top right */
-        footer {display: none !important;}
-    </style>
+<style>
+  #MainMenu, header, footer {display: none !important;}
+</style>
+""", unsafe_allow_html=True)
+st.markdown("""
+<style>
+  .app-topbar {
+    position: sticky; top: 0; z-index: 1000;
+    display:flex; align-items:center; gap:.75rem;
+    padding:.6rem 1rem; background:#fff; border-bottom:1px solid #eee;
+  }
+</style>
+<div class="app-topbar">
+  <span>🍳</span><strong>Recipe Bot</strong>
+</div>
 """, unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
 
