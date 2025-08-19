@@ -4,22 +4,33 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide", initial_sidebar_state="expanded")
+# Keep sidebar ALWAYS visible (fixed), push content right, remove toolbar
 st.markdown("""
 <style>
-  #MainMenu, header, footer {display: none !important;}
+/* Always show/fix the sidebar */
+section[data-testid="stSidebar"] {
+  position: fixed !important;
+  top: 0; left: 0;
+  height: 100vh !important;
+  width: 18rem;                 /* adjust if your sidebar is wider/narrower */
+  display: block !important;
+  visibility: visible !important;
+  z-index: 999;
+}
+
+/* Push main content so it doesn't sit under the sidebar */
+div[data-testid="stAppViewContainer"] {
+  margin-left: 18rem !important;  /* must match the sidebar width above */
+}
+
+/* Optional: tighten main padding a bit */
+.block-container { padding-left: 2rem; padding-right: 2rem; }
+
+/* Remove Streamlit’s top header/toolbar so users can’t collapse the sidebar */
+header, #MainMenu, footer, header [data-testid="stToolbar"] {
+  display: none !important;
+}
 </style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<style>
-  .app-topbar {
-    position: sticky; top: 0; z-index: 1000;
-    display:flex; align-items:center; gap:.75rem;
-    padding:.6rem 1rem; background:#fff; border-bottom:1px solid #eee;
-  }
-</style>
-<div class="app-topbar">
-  <span>🍳</span><strong>Recipe Bot</strong>
-</div>
 """, unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
 
