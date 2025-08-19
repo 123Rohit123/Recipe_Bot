@@ -4,6 +4,55 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+st.markdown("""
+<style>
+  /* Hide Streamlit default chrome in the top-right */
+  #MainMenu {display:none !important;}
+  header [data-testid="stToolbar"] {display:none !important;}
+  footer {display:none !important;}
+</style>
+""", unsafe_allow_html=True)
+
+# Top-left sidebar toggle (works great on mobile)
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
+
+col_toggle, _ = st.columns([1, 9])
+with col_toggle:
+    if st.button("☰ Filters", help="Show/Hide sidebar on small screens"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+
+# Responsive behavior: fixed on desktop, overlay on mobile
+st.markdown("""
+<style>
+/* Desktop (≥ 992px): sidebar fixed and content pushed right */
+@media (min-width: 992px) {
+  section[data-testid="stSidebar"] {
+    position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18rem;
+    visibility: visible !important; display: block !important; z-index: 999;
+  }
+  div[data-testid="stAppViewContainer"] { margin-left: 18rem; }
+}
+/* Mobile (< 992px): sidebar overlays; content full width */
+@media (max-width: 991px) {
+  section[data-testid="stSidebar"] {
+    position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 85vw; max-width: 320px;
+    box-shadow: 0 0 24px rgba(0,0,0,.15); background: white;
+  }
+  div[data-testid="stAppViewContainer"] { margin-left: 0; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# If toggled off on mobile, hide the sidebar
+if not st.session_state.sidebar_open:
+    st.markdown("""
+    <style>
+    @media (max-width: 991px) {
+      section[data-testid="stSidebar"] { display: none !important; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
 
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
