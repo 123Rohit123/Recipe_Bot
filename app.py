@@ -5,7 +5,8 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
                    layout="wide", initial_sidebar_state="expanded")
-# ---- Hide Streamlit's default top-right toolbar/menu (optional) ----
+
+# OPTIONAL: hide Streamlit's top-right menu/toolbar/footer
 st.markdown(
     """
     <style>
@@ -15,53 +16,78 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---- Sidebar toggle (independent from Streamlit's toolbar) ----
+# --- Sidebar toggle state ---
 if "sidebar_open" not in st.session_state:
     st.session_state.sidebar_open = True
 
-# Top-left toggle button (in main area)
-col_toggle, _ = st.columns([1, 10])
-with col_toggle:
+# --- Toggle button (top-left, in main content) ---
+left, _ = st.columns([1, 12])
+with left:
     label = "◀︎ Hide filters" if st.session_state.sidebar_open else "▶︎ Show filters"
     if st.button(label, help="Toggle the sidebar"):
         st.session_state.sidebar_open = not st.session_state.sidebar_open
 
-# Responsive layout + toggle behavior
-SIDEBAR_WIDTH = "18rem"  # keep this in sync with your design
+# --- Sliding sidebar CSS (robust across Streamlit versions) ---
+SIDEBAR_WIDTH = "18rem"  # keep this in sync if you change sidebar width
 
-css_when_open = f"""
+BASE_CSS = f"""
 <style>
-/* Sidebar fixed & visible */
-section[data-testid="stSidebar"] {{
+/* Support different DOM tags Streamlit has used for the sidebar */
+aside[data-testid="stSidebar"],
+section[data-testid="stSidebar"],
+div[data-testid="stSidebar"] {{
   position: fixed !important;
   top: 0; left: 0;
   height: 100vh !important;
   width: {SIDEBAR_WIDTH};
-  display: block !important;
-  visibility: visible !important;
-  z-index: 999;
+  z-index: 1000;
+  background: var(--background-color, #fff);
+  transition: transform .25s ease, box-shadow .25s ease;
 }}
-/* Push content to the right so it doesn't go under the sidebar */
+
+/* Main app container; we push/pull it on desktop */
 div[data-testid="stAppViewContainer"] {{
-  margin-left: {SIDEBAR_WIDTH};
-}}
-/* Make touch targets a bit larger on phones */
-@media (max-width: 991px) {{
-  .stButton > button, .stSlider, .stMultiSelect div[data-baseweb="select"] {{ font-size: 1rem; }}
+  transition: margin-left .25s ease;
 }}
 </style>
 """
+st.markdown(BASE_CSS, unsafe_allow_html=True)
 
-css_when_closed = """
-<style>
-/* Hide sidebar entirely */
-section[data-testid="stSidebar"] { display: none !important; }
-/* Let the app content take full width */
-div[data-testid="stAppViewContainer"] { margin-left: 0 !important; }
-</style>
-"""
+if st.session_state.sidebar_open:
+    OPEN_CSS = f"""
+    <style>
+    aside[data-testid="stSidebar"],
+    section[data-testid="stSidebar"],
+    div[data-testid="stSidebar"] {{
+      transform: translateX(0);
+      box-shadow: 0 0 24px rgba(0,0,0,.12);
+    }}
+    /* On desktop, push content to the right to avoid overlap */
+    @media (min-width: 992px) {{
+      div[data-testid="stAppViewContainer"] {{ margin-left: {SIDEBAR_WIDTH}; }}
+    }}
+    /* On mobile, overlay the content (no margin) */
+    @media (max-width: 991px) {{
+      div[data-testid="stAppViewContainer"] {{ margin-left: 0 !important; }}
+    }}
+    </style>
+    """
+    st.markdown(OPEN_CSS, unsafe_allow_html=True)
+else:
+    CLOSED_CSS = """
+    <style>
+    aside[data-testid="stSidebar"],
+    section[data-testid="stSidebar"],
+    div[data-testid="stSidebar"] {
+      transform: translateX(-105%);   /* slides out to the left */
+      box-shadow: none;
+    }
+    /* Content uses full width when sidebar is hidden */
+    div[data-testid="stAppViewContainer"] { margin-left: 0 !important; }
+    </style>
+    """
+    st.markdown(CLOSED_CSS, unsafe_allow_html=True)
 
-st.markdown(css_when_open if st.session_state.sidebar_open else css_when_closed, unsafe_allow_html=True)
 
 
 st.title("🥘 Recipe Bot")
