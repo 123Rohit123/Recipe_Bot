@@ -12,7 +12,7 @@ HIDE_TOOLBAR = """
 [data-testid="stToolbar"] {display: none !important;}
 </style>
 """
-st.markdown(HIDE_TOOLBAR, unsafe_allow_html=True)
+st.markdown(HIDE_TOOLBAR, unsafe_allow_html=False)
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
 # ----------------------
