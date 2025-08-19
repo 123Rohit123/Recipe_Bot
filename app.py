@@ -5,6 +5,87 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
                    layout="wide", initial_sidebar_state="expanded")
+# === Independent Sidebar Toggle (not using Streamlit's toolbar) ===
+# 1) State
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
+
+SIDEBAR_WIDTH = "18rem"  # keep in sync with your design
+
+# 2) Toggle button (appears in the main page header area)
+#    Change to fixed-floating by uncommenting the CSS below.
+left_toggle_col, _ = st.columns([1, 12])
+with left_toggle_col:
+    toggle_label = "◀︎ Hide filters" if st.session_state.sidebar_open else "▶︎ Show filters"
+    if st.button(toggle_label, help="Toggle the sidebar"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+
+# 3) Base CSS (version-tolerant selectors + smooth slide animation)
+st.markdown(f"""
+<style>
+/* Support different tags Streamlit has used for the sidebar */
+aside[data-testid="stSidebar"],
+section[data-testid="stSidebar"],
+div[data-testid="stSidebar"] {{
+  position: fixed !important;
+  top: 0; left: 0;
+  height: 100vh !important;
+  width: {SIDEBAR_WIDTH};
+  background: var(--background-color, #fff);
+  z-index: 1000;
+  transition: transform .25s ease, box-shadow .25s ease;
+}}
+
+/* Main app container shifts on desktop when sidebar open */
+div[data-testid="stAppViewContainer"] {{
+  transition: margin-left .25s ease;
+}}
+
+/* Optional: make the toggle button look nicer */
+.stButton > button {{
+  padding: .45rem .9rem;
+  border-radius: 999px;
+}}
+</style>
+""", unsafe_allow_html=True)
+
+# 4) Open/Closed styles
+if st.session_state.sidebar_open:
+    st.markdown(f"""
+    <style>
+    aside[data-testid="stSidebar"],
+    section[data-testid="stSidebar"],
+    div[data-testid="stSidebar"] {{
+      transform: translateX(0);
+      box-shadow: 0 0 24px rgba(0,0,0,.10);
+    }}
+    /* Desktop: push content when open; Mobile: overlay */
+    @media (min-width: 992px) {{
+      div[data-testid="stAppViewContainer"] {{ margin-left: {SIDEBAR_WIDTH}; }}
+    }}
+    @media (max-width: 991px) {{
+      div[data-testid="stAppViewContainer"] {{ margin-left: 0 !important; }}
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <style>
+    aside[data-testid="stSidebar"],
+    section[data-testid="stSidebar"],
+    div[data-testid="stSidebar"] {
+      transform: translateX(-105%);
+      box-shadow: none;
+    }
+    /* Full width content when sidebar hidden */
+    div[data-testid="stAppViewContainer"] { margin-left: 0 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# (Optional) If you previously hid the sidebar with display:none in other CSS, remove that.
+# Using transform keeps it able to slide back in.
+# === End independent toggle ===
+
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
