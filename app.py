@@ -8,7 +8,7 @@ st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide", ini
 st.markdown("""
 <style>
 /* Always show/fix the sidebar */
-section[data-testid="stSidebar"] {
+  section[data-testid="stSidebar"] {
   position: fixed !important;
   top: 0; left: 0;
   height: 100vh !important;
