@@ -11,11 +11,6 @@ st.caption("Pick what you have. I’ll suggest recipes with steps and a related 
 if "sidebar_open" not in st.session_state:
     st.session_state.sidebar_open = True
 
-col_toggle, _ = st.columns([1, 9])
-with col_toggle:
-    if st.button("☰ Filters", help="Show/Hide sidebar on phones"):
-        st.session_state.sidebar_open = not st.session_state.sidebar_open
-
 st.markdown(
     """
     <style>
