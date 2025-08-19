@@ -5,50 +5,40 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
                    layout="wide", initial_sidebar_state="expanded")
-# Keep the native sidebar toggle, hide everything else in the toolbar
-# Keep only the left chevron; hide the rest of the toolbar
-st.markdown("""
-<style>
-  /* Keep toolbar present so the chevron can live there */
-  header [data-testid="stToolbar"] {display: flex !important; align-items: center;}
+st.markdown(
+    """
+    <style>
+      /* Keep toolbar present so the chevron can live there */
+      header [data-testid="stToolbar"] {display: flex !important; align-items: center;}
 
-  /* Hide footer & main menu */
-  #MainMenu, footer {display: none !important;}
+      /* Hide footer & main menu */
+      #MainMenu, footer {display: none !important;}
 
-  /* Hide ALL toolbar buttons by default... */
-  header [data-testid="stToolbar"] button,
-  header [data-testid="stToolbar"] a,
-  header [data-testid="stToolbar"] div > * {
-    visibility: hidden !important;       /* hide but keep layout so chevron position remains */
-    pointer-events: none !important;
-  }
+      /* Hide ALL toolbar buttons by default */
+      header [data-testid="stToolbar"] button,
+      header [data-testid="stToolbar"] a,
+      header [data-testid="stToolbar"] div > * {
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
 
-  /* ...then re-show ONLY the sidebar toggle chevron. Different Streamlit builds use different attrs,
-     so we whitelist multiple possibilities below. One of these will match. */
+      /* Re-show ONLY the sidebar toggle chevron */
+      header [data-testid="stToolbar"] button[aria-label*="sidebar" i],
+      header [data-testid="stToolbar"] button[title*="sidebar" i],
+      header [data-testid="stToolbar"] [data-testid="baseButton-toggleSidebar"],
+      header [data-testid="stToolbar"] [data-testid="stSidebarNavButton"],
+      header [data-testid="stToolbar"] > *:first-child {
+        visibility: visible !important;
+        pointer-events: auto !important;
+        display: inline-flex !important;
+      }
 
-  /* aria-label contains 'sidebar' */
-  header [data-testid="stToolbar"] button[aria-label*="sidebar" i] {
-    visibility: visible !important; pointer-events: auto !important; display: inline-flex !important;
-  }
-  /* title contains 'sidebar' */
-  header [data-testid="stToolbar"] button[title*="sidebar" i] {
-    visibility: visible !important; pointer-events: auto !important; display: inline-flex !important;
-  }
-  /* data-testid sometimes used on the toggle */
-  header [data-testid="stToolbar"] [data-testid="baseButton-toggleSidebar"],
-  header [data-testid="stToolbar"] [data-testid="stSidebarNavButton"] {
-    visibility: visible !important; pointer-events: auto !important; display: inline-flex !important;
-  }
-
-  /* If your build renders the chevron as the FIRST child, this fallback ensures it stays visible */
-  header [data-testid="stToolbar"] > *:first-child {
-    visibility: visible !important; pointer-events: auto !important; display: inline-flex !important;
-  }
-
-  /* Make header compact (optional) */
-  header {min-height: 2.5rem;}
-</style>
-""", unsafe_allow_ht
+      /* Compact header */
+      header {min-height: 2.5rem;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
