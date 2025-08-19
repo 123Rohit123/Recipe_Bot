@@ -4,7 +4,7 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
-                   layout="short", initial_sidebar_state="expanded")
+                   layout="wide", initial_sidebar_state="expanded")
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
