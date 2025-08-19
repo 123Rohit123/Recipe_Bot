@@ -5,6 +5,26 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
 st.title("🥘 Recipe Bot")
+st.markdown("""
+<style>
+/* Keep sidebar always visible and fixed */
+section[data-testid="stSidebar"] {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh !important;
+    visibility: visible !important;
+    display: block !important;
+    z-index: 999; /* stays above main content */
+}
+
+/* Push main content so it doesn't overlap */
+div[data-testid="stAppViewContainer"] {
+    margin-left: 18rem;  /* adjust width to your sidebar size */
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
 # ----------------------
@@ -437,7 +457,7 @@ RECIPES: List[Recipe] = [
 # ---------------
 # UI — Sidebar Filters
 # ---------------
-st.sidebar.header("Your Pantry")
+st.sidebar.header("Pick what you have!")
 
 # Cuisine preference
 cuisine_pref = st.sidebar.multiselect(
