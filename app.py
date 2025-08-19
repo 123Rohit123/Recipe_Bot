@@ -13,10 +13,6 @@ st.markdown("""
   background: #ffffff; border-bottom: 1px solid #eee;
 }
 .topbar-left { display:flex; align-items:center; gap:.6rem; font-weight:600; }
-.topbar-right { display:flex; gap:.5rem; }
-.topbar-right .stButton>button, .topbar-right .stLinkButton>a {
-  padding: .35rem .8rem; border-radius: 999px; border: 1px solid #e5e7eb;
-}
 @media (max-width: 640px) { .topbar-left span.title { font-size: .98rem; } }
 </style>
 <div class="topbar">
