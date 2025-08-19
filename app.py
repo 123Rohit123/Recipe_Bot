@@ -4,16 +4,6 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-# Hide sidebar on small screens when toggled off
-if not st.session_state.sidebar_open:
-    st.markdown("""
-    <style>
-    @media (max-width: 991px) {
-      section[data-testid="stSidebar"] { display: none !important; }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 st.title("🥘 Recipe Bot")
 st.markdown("""
 <style>
