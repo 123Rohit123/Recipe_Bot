@@ -8,7 +8,6 @@ st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
 st.markdown("""
     <style>
         /* Hide hamburger menu and toolbar items on the top right */
-        #MainMenu {display: none !important;}
         header [data-testid="stToolbar"] {display: none !important;}
         footer {display: none !important;}
     </style>
