@@ -4,6 +4,52 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+# --- Responsive & Fixed Sidebar (desktop) + Toggle (mobile) ---
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
+
+# A small toggle button (works great on phones)
+col_toggle, _ = st.columns([1, 9])
+with col_toggle:
+    if st.button("☰ Filters", help="Show/Hide sidebar on small screens"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+
+# Base responsive styles
+st.markdown("""
+<style>
+/* Desktop (≥ 992px): sidebar fixed and content pushed right */
+@media (min-width: 992px) {
+  section[data-testid="stSidebar"] {
+    position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18rem;
+    visibility: visible !important; display: block !important; z-index: 999;
+  }
+  div[data-testid="stAppViewContainer"] { margin-left: 18rem; }
+}
+
+/* Mobile (< 992px): sidebar overlays, content full width */
+@media (max-width: 991px) {
+  section[data-testid="stSidebar"] {
+    position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 85vw; max-width: 320px;
+    box-shadow: 0 0 24px rgba(0,0,0,.15); background: white;
+  }
+  div[data-testid="stAppViewContainer"] { margin-left: 0; }
+
+  /* slightly larger touch targets */
+  .stButton > button, .stSlider, .stMultiSelect div[data-baseweb="select"] { font-size: 1rem; }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Hide sidebar on small screens when toggled off
+if not st.session_state.sidebar_open:
+    st.markdown("""
+    <style>
+    @media (max-width: 991px) {
+      section[data-testid="stSidebar"] { display: none !important; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("🥘 Recipe Bot")
 st.markdown("""
 <style>
