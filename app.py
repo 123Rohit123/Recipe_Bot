@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Set
 import urllib.parse
 
-st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide", sidebar_state="expanded")
 # ---- Hide Streamlit Toolbar / GitHub / Fork buttons ----
 HIDE_TOOLBAR = """
 <style>
