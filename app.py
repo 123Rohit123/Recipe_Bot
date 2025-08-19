@@ -5,40 +5,64 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
                    layout="wide", initial_sidebar_state="expanded")
+# ---- Hide Streamlit's default top-right toolbar/menu (optional) ----
 st.markdown(
     """
     <style>
-      /* Keep toolbar present so the chevron can live there */
-      header [data-testid="stToolbar"] {display: flex !important; align-items: center;}
-
-      /* Hide footer & main menu */
-      #MainMenu, footer {display: none !important;}
-
-      /* Hide ALL toolbar buttons by default */
-      header [data-testid="stToolbar"] button,
-      header [data-testid="stToolbar"] a,
-      header [data-testid="stToolbar"] div > * {
-        visibility: hidden !important;
-        pointer-events: none !important;
-      }
-
-      /* Re-show ONLY the sidebar toggle chevron */
-      header [data-testid="stToolbar"] button[aria-label*="sidebar" i],
-      header [data-testid="stToolbar"] button[title*="sidebar" i],
-      header [data-testid="stToolbar"] [data-testid="baseButton-toggleSidebar"],
-      header [data-testid="stToolbar"] [data-testid="stSidebarNavButton"],
-      header [data-testid="stToolbar"] > *:first-child {
-        visibility: visible !important;
-        pointer-events: auto !important;
-        display: inline-flex !important;
-      }
-
-      /* Compact header */
-      header {min-height: 2.5rem;}
+      #MainMenu, footer, header [data-testid="stToolbar"] { display: none !important; }
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
+
+# ---- Sidebar toggle (independent from Streamlit's toolbar) ----
+if "sidebar_open" not in st.session_state:
+    st.session_state.sidebar_open = True
+
+# Top-left toggle button (in main area)
+col_toggle, _ = st.columns([1, 10])
+with col_toggle:
+    label = "◀︎ Hide filters" if st.session_state.sidebar_open else "▶︎ Show filters"
+    if st.button(label, help="Toggle the sidebar"):
+        st.session_state.sidebar_open = not st.session_state.sidebar_open
+
+# Responsive layout + toggle behavior
+SIDEBAR_WIDTH = "18rem"  # keep this in sync with your design
+
+css_when_open = f"""
+<style>
+/* Sidebar fixed & visible */
+section[data-testid="stSidebar"] {{
+  position: fixed !important;
+  top: 0; left: 0;
+  height: 100vh !important;
+  width: {SIDEBAR_WIDTH};
+  display: block !important;
+  visibility: visible !important;
+  z-index: 999;
+}}
+/* Push content to the right so it doesn't go under the sidebar */
+div[data-testid="stAppViewContainer"] {{
+  margin-left: {SIDEBAR_WIDTH};
+}}
+/* Make touch targets a bit larger on phones */
+@media (max-width: 991px) {{
+  .stButton > button, .stSlider, .stMultiSelect div[data-baseweb="select"] {{ font-size: 1rem; }}
+}}
+</style>
+"""
+
+css_when_closed = """
+<style>
+/* Hide sidebar entirely */
+section[data-testid="stSidebar"] { display: none !important; }
+/* Let the app content take full width */
+div[data-testid="stAppViewContainer"] { margin-left: 0 !important; }
+</style>
+"""
+
+st.markdown(css_when_open if st.session_state.sidebar_open else css_when_closed, unsafe_allow_html=True)
+
 
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
