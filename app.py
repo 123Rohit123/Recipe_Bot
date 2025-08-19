@@ -4,43 +4,7 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-# --- Sidebar toggle button ---
-if "hide_sidebar" not in st.session_state:
-    st.session_state.hide_sidebar = False
-
-colA, colB = st.columns([1, 8])
-with colA:
-    if st.button("☰ Filters", help="Show/Hide sidebar"):
-        st.session_state.hide_sidebar = not st.session_state.hide_sidebar
-
-# Apply CSS based on state
-if st.session_state.hide_sidebar:
-    st.markdown("""
-    <style>
-      /* Hide the sidebar */
-      section[data-testid="stSidebar"] {display: none !important;}
-      /* Stretch the main area when sidebar is hidden */
-      .block-container {padding-left: 2rem !important; padding-right: 2rem !important;}
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <style>
-      /* Make sure sidebar is visible */
-      section[data-testid="stSidebar"] {display: block !important; visibility: visible !important;}
-    </style>
-    """, unsafe_allow_html=True)
-# ---- Hide Streamlit Toolbar / GitHub / Fork buttons ----
-HIDE_TOOLBAR = """
-<style>
-/* Hide top-right toolbar (Fork, GitHub, ⋮ menu) */
-[data-testid="stToolbar"] {display: none !important;}
-button[kind="header"] {display: none !important;}
-.css-hi6a2p {display: none !important;}  /* legacy */
-</style>
-"""
 st.markdown(HIDE_TOOLBAR, unsafe_allow_html=True)
-
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
