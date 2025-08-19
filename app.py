@@ -5,6 +5,16 @@ import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
 st.title("🥘 Recipe Bot")
+# ---- Hide Streamlit Toolbar / GitHub / Fork buttons ----
+HIDE_TOOLBAR = """
+<style>
+/* Hide top-right toolbar (Fork, GitHub, ⋮ menu) */
+[data-testid="stToolbar"] {display: none !important;}
+button[kind="header"] {display: none !important;}
+.css-hi6a2p {display: none !important;}  /* legacy */
+</style>
+"""
+st.markdown(HIDE_TOOLBAR, unsafe_allow_html=True)
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
 # ----------------------
