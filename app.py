@@ -4,6 +4,25 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+# Keep the native sidebar toggle, hide everything else in the toolbar
+st.markdown("""
+<style>
+  /* Hide Streamlit's hamburger menu and footer */
+  #MainMenu {display: none !important;}
+  footer {display: none !important;}
+
+  /* Keep the toolbar container visible (so the toggle stays) */
+  header [data-testid="stToolbar"] {display: flex !important;}
+
+  /* Hide everything in the toolbar EXCEPT the first child (the sidebar chevron) */
+  header [data-testid="stToolbar"] > *:not(:first-child) {
+    display: none !important;
+  }
+
+  /* Optional: tighten header height a bit */
+  header { min-height: 2.5rem; }
+</style>
+""", unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
