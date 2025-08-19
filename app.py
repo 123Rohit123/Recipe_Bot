@@ -4,15 +4,6 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-st.markdown("""
-<style>
-.topbar {
-  position: sticky; top: 0; z-index: 1000;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: .75rem; padding: .6rem 1rem;
-  background: #ffffff; border-bottom: 1px solid #eee;
-}
-
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
