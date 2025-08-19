@@ -12,16 +12,7 @@ st.markdown("""
   gap: .75rem; padding: .6rem 1rem;
   background: #ffffff; border-bottom: 1px solid #eee;
 }
-.topbar-left { display:flex; align-items:center; gap:.6rem; font-weight:600; }
-@media (max-width: 640px) { .topbar-left span.title { font-size: .98rem; } }
-</style>
-<div class="topbar">
-  <div class="topbar-left">
-    <span>🍳</span><span class="title">Recipe Bot</span>
-  </div>
-  <div class="topbar-right" id="topbar-actions"></div>
-</div>
-""", unsafe_allow_html=True)
+
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
