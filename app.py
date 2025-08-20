@@ -4,6 +4,13 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
+st.markdown("""
+    <style>
+        /* Hide the "Fork this app" button */
+        [data-testid="stActionButtonIcon"] {display: none !important;}
+        [title="Fork this app"] {display: none !important;}
+    </style>
+""", unsafe_allow_html=True)
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
