@@ -28,25 +28,6 @@ components.html(
           return false;
         };
 
-        // Check all descendants
-        toolbar.querySelectorAll('*').forEach(kill);
-
-        // Sometimes the visible button is a parent wrapper
-        toolbar.childNodes.forEach(node => {
-          if (node.nodeType === 1) {
-            const t = (node.textContent || '').toLowerCase();
-            if (t.includes('fork') || t.includes('github')) node.style.display = 'none';
-          }
-        });
-      }
-
-      // run now and also whenever Streamlit re-renders the header
-      hideToolbarStuff();
-      const obs = new MutationObserver(hideToolbarStuff);
-      obs.observe(parent.document.body, { childList: true, subtree: true });
-    </script>
-    """,
-    height=0, scrolling=False
 )
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
