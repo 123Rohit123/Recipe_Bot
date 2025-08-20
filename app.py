@@ -21,7 +21,7 @@ components.html(
           const t = ((el.getAttribute('title')||'') + ' ' +
                      (el.getAttribute('aria-label')||'') + ' ' +
                      (el.textContent||'')).toLowerCase();
-          if (t.includes('fork') || t.includes('github') || t.includes('more') || t.includes('menu')) {
+          if (t.includes('fork') || t.includes('github')) {
             el.style.display = 'none';
             return true;
           }
