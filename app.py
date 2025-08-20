@@ -428,57 +428,52 @@ RECIPES: List[Recipe] = [
     ),
 ]
 
+# --- Sidebar Filters (with keys) ---
 st.sidebar.header("Your Pantry")
-
 
 cuisine_pref = st.sidebar.multiselect(
     "Cuisine preferences (optional)",
-    [
-        "Indian", "Chinese", "Italian", "American", "American/Mex-Tex",
-        "Mexican", "Mediterranean"
-    ],
+    ["Indian", "Chinese", "Italian", "American", "American/Mex-Tex", "Mexican", "Mediterranean"],
+    key="cuisine_pref",
 )
-
-
 diet_pref = st.sidebar.selectbox(
     "Diet",
     ["no preference", "veg", "vegan", "egg-veg", "omnivore"],
+    key="diet_pref",
 )
-
-
-time_limit = st.sidebar.slider("Time limit (minutes)", 10, 60, 25)
+time_limit = st.sidebar.slider("Time limit (minutes)", 10, 60, 25, key="time_limit")
 
 st.sidebar.markdown("---")
 
+veggies = sorted({"onion","red onion","spring onion","garlic","ginger","green chilli","chilli flakes",
+                  "tomato","bell pepper","capsicum","carrot","peas","corn","mushroom",
+                  "broccoli","cauliflower","spinach","lettuce","cucumber","potato","cilantro",
+                  "parsley","basil"})
+proteins = sorted({"egg","paneer","tofu","chickpeas","lentils","beans","chicken","shrimp","minced beef"})
+masalas  = sorted({"cumin","coriander","turmeric","garam masala","kasuri methi","mustard seeds",
+                   "asafoetida","curry leaves","chilli powder","paprika","black pepper","white pepper","salt"})
+sauces   = sorted({"light soy sauce","oyster sauce","sesame oil","tomato paste","salsa",
+                   "ketchup","mustard","vinegar","lime","lemon","tahini","cream","parmesan"})
+carbs    = sorted({"rice","pasta","spaghetti","penne","pita","naan","tortilla"})
+others   = sorted({"oil","olive oil","butter","ghee","milk","cheddar","parmesan","cornstarch","peanuts","cheese"})
 
-veggies = sorted({
-    "onion", "red onion", "spring onion", "garlic", "ginger", "green chilli", "chilli flakes",
-    "tomato", "bell pepper", "capsicum", "carrot", "peas", "corn", "mushroom",
-    "broccoli", "cauliflower", "spinach", "lettuce", "cucumber", "potato", "cilantro",
-    "parsley", "basil"
-})
-proteins = sorted({"egg", "paneer", "tofu", "chickpeas", "lentils", "beans", "chicken", "shrimp", "minced beef"})
-masalas = sorted({
-    "cumin", "coriander", "turmeric", "garam masala", "kasuri methi", "mustard seeds",
-    "asafoetida", "curry leaves", "chilli powder", "paprika", "black pepper", "white pepper", "salt"
-})
-sauces = sorted({
-    "light soy sauce", "oyster sauce", "sesame oil", "tomato paste", "salsa",
-    "ketchup", "mustard", "vinegar", "lime", "lemon", "tahini", "cream", "parmesan"
-})
-carbs = sorted({"rice", "pasta", "spaghetti", "penne", "pita", "naan", "tortilla"})
-others = sorted({"oil", "olive oil", "butter", "ghee", "milk", "cheddar", "parmesan", "cornstarch", "peanuts", "cheese"})
+sel_veggies  = st.sidebar.multiselect("Veggies", veggies, key="veggies")
+sel_proteins = st.sidebar.multiselect("Proteins (meat/egg/tofu)", proteins, key="proteins")
+sel_masalas  = st.sidebar.multiselect("Masalas / Spices", masalas, key="masalas")
+sel_sauces   = st.sidebar.multiselect("Sauces & Condiments", sauces, key="sauces")
+sel_carbs    = st.sidebar.multiselect("Carbs / Base", carbs, key="carbs")
+sel_others   = st.sidebar.multiselect("Others", others, key="others")
 
-sel_veggies = st.sidebar.multiselect("Veggies", veggies)
-sel_proteins = st.sidebar.multiselect("Proteins (meat/egg/tofu)", proteins)
-sel_masalas = st.sidebar.multiselect("Masalas / Spices", masalas)
-sel_sauces = st.sidebar.multiselect("Sauces & Condiments", sauces)
-sel_carbs = st.sidebar.multiselect("Carbs / Base", carbs)
-sel_others = st.sidebar.multiselect("Others", others)
+def reset_filters():
+    st.session_state["cuisine_pref"] = []
+    st.session_state["diet_pref"] = "no preference"
+    st.session_state["time_limit"] = 25
+    for key in ["veggies", "proteins", "masalas", "sauces", "carbs", "others"]:
+        st.session_state[key] = []
+    st.rerun()
 
-st.sidebar.markdown("---")
+st.sidebar.button("Reset filters", type="secondary", use_container_width=True, on_click=reset_filters)
 run = st.sidebar.button("Suggest Recipes", use_container_width=True)
-
 
 def coverage_score(have: Set[str], need: List[str]) -> float:
     if not need:
