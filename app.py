@@ -428,7 +428,7 @@ RECIPES: List[Recipe] = [
     ),
 ]
 
-# --- Sidebar Filters (with keys) ---
+# --- Sidebar Filters (keys added) ---
 st.sidebar.header("Your Pantry")
 
 cuisine_pref = st.sidebar.multiselect(
@@ -436,19 +436,23 @@ cuisine_pref = st.sidebar.multiselect(
     ["Indian", "Chinese", "Italian", "American", "American/Mex-Tex", "Mexican", "Mediterranean"],
     key="cuisine_pref",
 )
+
 diet_pref = st.sidebar.selectbox(
     "Diet",
     ["no preference", "veg", "vegan", "egg-veg", "omnivore"],
     key="diet_pref",
 )
+
 time_limit = st.sidebar.slider("Time limit (minutes)", 10, 60, 25, key="time_limit")
 
 st.sidebar.markdown("---")
 
-veggies = sorted({"onion","red onion","spring onion","garlic","ginger","green chilli","chilli flakes",
-                  "tomato","bell pepper","capsicum","carrot","peas","corn","mushroom",
-                  "broccoli","cauliflower","spinach","lettuce","cucumber","potato","cilantro",
-                  "parsley","basil"})
+veggies = sorted({
+    "onion","red onion","spring onion","garlic","ginger","green chilli","chilli flakes",
+    "tomato","bell pepper","capsicum","carrot","peas","corn","mushroom",
+    "broccoli","cauliflower","spinach","lettuce","cucumber","potato","cilantro",
+    "parsley","basil"
+})
 proteins = sorted({"egg","paneer","tofu","chickpeas","lentils","beans","chicken","shrimp","minced beef"})
 masalas  = sorted({"cumin","coriander","turmeric","garam masala","kasuri methi","mustard seeds",
                    "asafoetida","curry leaves","chilli powder","paprika","black pepper","white pepper","salt"})
@@ -464,16 +468,48 @@ sel_sauces   = st.sidebar.multiselect("Sauces & Condiments", sauces, key="sauces
 sel_carbs    = st.sidebar.multiselect("Carbs / Base", carbs, key="carbs")
 sel_others   = st.sidebar.multiselect("Others", others, key="others")
 
-def reset_filters():
-    st.session_state["cuisine_pref"] = []
-    st.session_state["diet_pref"] = "no preference"
-    st.session_state["time_limit"] = 25
-    for key in ["veggies", "proteins", "masalas", "sauces", "carbs", "others"]:
-        st.session_state[key] = []
-    st.rerun()
+# ---- Defaults & state checks ----
+DEFAULTS = {
+    "cuisine_pref": [],
+    "diet_pref": "no preference",
+    "time_limit": 25,
+    "veggies": [], "proteins": [], "masalas": [], "sauces": [], "carbs": [], "others": [],
+}
 
-st.sidebar.button("Reset filters", type="secondary", use_container_width=True, on_click=reset_filters)
-run = st.sidebar.button("Suggest Recipes", use_container_width=True)
+def is_all_default() -> bool:
+    return (
+        st.session_state.get("cuisine_pref", []) == DEFAULTS["cuisine_pref"]
+        and st.session_state.get("diet_pref", DEFAULTS["diet_pref"]) == DEFAULTS["diet_pref"]
+        and st.session_state.get("time_limit", DEFAULTS["time_limit"]) == DEFAULTS["time_limit"]
+        and all(len(st.session_state.get(k, [])) == 0 for k in ["veggies","proteins","masalas","sauces","carbs","others"])
+    )
+
+def has_any_ingredient_selected() -> bool:
+    return any(len(st.session_state.get(k, [])) > 0 for k in ["veggies","proteins","masalas","sauces","carbs","others"])
+
+# If everything is default/blank → both buttons disabled
+disable_both = is_all_default()
+
+# ---- Reset button (no rerun needed) ----
+def reset_filters():
+    for k, v in DEFAULTS.items():
+        st.session_state[k] = v
+
+st.sidebar.button(
+    "Reset filters",
+    type="secondary",
+    use_container_width=True,
+    on_click=reset_filters,
+    disabled=disable_both,  # do nothing if already blank/default
+)
+
+# ---- Suggest button ----
+run = st.sidebar.button(
+    "Suggest Recipes",
+    use_container_width=True,
+    disabled=not has_any_ingredient_selected(),  # do nothing until at least 1 ingredient is chosen
+)
+
 
 def coverage_score(have: Set[str], need: List[str]) -> float:
     if not need:
