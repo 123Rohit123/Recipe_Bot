@@ -4,36 +4,49 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-# Hide ONLY the "Fork" control(s) in the top toolbar; keep the left chevron
-st.markdown(
+import streamlit as st
+import streamlit.components.v1 as components
+
+# keep toolbar so the left chevron works; then surgically remove items with JS
+components.html(
     """
-    <style>
-      /* Keep the toolbar visible so the sidebar chevron still works */
-      header [data-testid="stToolbar"] { display: flex !important; align-items: center; }
+    <script>
+      function hideToolbarStuff() {
+        const toolbar = parent.document.querySelector('header [data-testid="stToolbar"]');
+        if (!toolbar) return;
 
-      /* 1) Common cases: button/anchor with title or aria-label containing 'Fork' */
-      header [data-testid="stToolbar"] [title*="Fork" i],
-      header [data-testid="stToolbar"] [aria-label*="Fork" i] {
-        display: none !important; visibility: hidden !important; pointer-events: none !important;
+        // Remove buttons/links that say Fork / GitHub / overflow menu
+        const kill = (el) => {
+          if (!el) return false;
+          const t = ((el.getAttribute('title')||'') + ' ' +
+                     (el.getAttribute('aria-label')||'') + ' ' +
+                     (el.textContent||'')).toLowerCase();
+          if (t.includes('fork') || t.includes('github') || t.includes('more') || t.includes('menu')) {
+            el.style.display = 'none';
+            return true;
+          }
+          return false;
+        };
+
+        // Check all descendants
+        toolbar.querySelectorAll('*').forEach(kill);
+
+        // Sometimes the visible button is a parent wrapper
+        toolbar.childNodes.forEach(node => {
+          if (node.nodeType === 1) {
+            const t = (node.textContent || '').toLowerCase();
+            if (t.includes('fork') || t.includes('github')) node.style.display = 'none';
+          }
+        });
       }
 
-      /* 2) Older builds: generic action icon wrapper */
-      header [data-testid="stToolbar"] [data-testid="stActionButtonIcon"] {
-        display: none !important; visibility: hidden !important; pointer-events: none !important;
-      }
-
-      /* 3) Fallback: if Fork is rendered as a labeled button */
-      header [data-testid="stToolbar"] button:has(svg[aria-label*="fork" i]),
-      header [data-testid="stToolbar"] button:has(span:contains("Fork")) {
-        display: none !important; visibility: hidden !important; pointer-events: none !important;
-      }
-
-      /* Ensure other right-side items (e.g., ⋮, GitHub) also disappear if you want */
-      /* Uncomment the next line to hide everything on the right side except the first child (the chevron) */
-      /* header [data-testid="stToolbar"] > *:not(:first-child) { display: none !important; } */
-    </style>
+      // run now and also whenever Streamlit re-renders the header
+      hideToolbarStuff();
+      const obs = new MutationObserver(hideToolbarStuff);
+      obs.observe(parent.document.body, { childList: true, subtree: true });
+    </script>
     """,
-    unsafe_allow_html=True,
+    height=0, scrolling=False
 )
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
