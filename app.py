@@ -8,108 +8,6 @@ st.set_page_config(page_title="Recipe Bot", page_icon="🥘",
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
-# === Independent Sidebar Toggle (works without Streamlit toolbar) ===
-def setup_sidebar_toggle(width: str = "18rem", start_open: bool = True, hide_streamlit_toolbar: bool = False):
-    import streamlit as st
-
-    if "sidebar_open" not in st.session_state:
-        st.session_state.sidebar_open = bool(start_open)
-
-    # Optional: hide Streamlit's own top-right chrome (does NOT affect our toggle)
-    if hide_streamlit_toolbar:
-        st.markdown(
-            """
-            <style>
-              #MainMenu, footer, header [data-testid="stToolbar"] { display: none !important; }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    # Toggle button in the main page (top-left)
-    col_btn, _ = st.columns([1, 12])
-    with col_btn:
-        label = "◀ Hide filters" if st.session_state.sidebar_open else "▶ Show filters"
-        if st.button(label, help="Toggle sidebar"):
-            st.session_state.sidebar_open = not st.session_state.sidebar_open
-
-    # Base CSS (cover old custom CSS; support different Streamlit versions)
-    st.markdown(
-        f"""
-        <style>
-        /* Force the sidebar element to exist and be controllable */
-        aside[data-testid="stSidebar"],
-        section[data-testid="stSidebar"],
-        div[data-testid="stSidebar"] {{
-            position: fixed !important;
-            top: 0; left: 0;
-            height: 100vh !important;
-            width: {width};
-            display: block !important;
-            visibility: visible !important;
-            background: var(--background-color, #fff);
-            z-index: 1000;
-            transition: transform .25s ease, box-shadow .25s ease;
-        }}
-
-        /* Main app container transitions so it doesn't jump */
-        div[data-testid="stAppViewContainer"] {{
-            transition: margin-left .25s ease;
-        }}
-
-        /* Larger touch targets on phones */
-        @media (max-width: 991px) {{
-          .stButton > button, .stSlider, .stMultiSelect div[data-baseweb="select"] {{ font-size: 1rem; }}
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Apply "open" or "closed" look
-    if st.session_state.sidebar_open:
-        st.markdown(
-            f"""
-            <style>
-            aside[data-testid="stSidebar"],
-            section[data-testid="stSidebar"],
-            div[data-testid="stSidebar"] {{
-                transform: translateX(0);
-                box-shadow: 0 0 24px rgba(0,0,0,.10);
-            }}
-            /* Desktop: push content over; Mobile: overlay */
-            @media (min-width: 992px) {{
-              div[data-testid="stAppViewContainer"] {{ margin-left: {width}; }}
-            }}
-            @media (max-width: 991px) {{
-              div[data-testid="stAppViewContainer"] {{ margin-left: 0 !important; }}
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(
-            """
-            <style>
-            aside[data-testid="stSidebar"],
-            section[data-testid="stSidebar"],
-            div[data-testid="stSidebar"] {
-                transform: translateX(-105%);   /* slide out to the left */
-                box-shadow: none;
-            }
-            /* Content uses full width when hidden */
-            div[data-testid="stAppViewContainer"] { margin-left: 0 !important; }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-# === End helper ===
-
-
-# ----------------------
-# Data Models & Helpers
-# ----------------------
 @dataclass
 class Recipe:
     title: str
@@ -148,9 +46,6 @@ def norm(x: str) -> str:
     x = x.strip().lower()
     return synonyms.get(x, x)
 
-# ----------------------
-# Seed Recipe Base (Expanded)
-# ----------------------
 RECIPES: List[Recipe] = [
     # ---- INDIAN ----
     Recipe(
@@ -533,14 +428,10 @@ RECIPES: List[Recipe] = [
         ],
     ),
 ]
-setup_sidebar_toggle(width="18rem", start_open=True, hide_streamlit_toolbar=False)
 
-# ---------------
-# UI — Sidebar Filters
-# ---------------
 st.sidebar.header("Your Pantry")
 
-# Cuisine preference
+
 cuisine_pref = st.sidebar.multiselect(
     "Cuisine preferences (optional)",
     [
@@ -549,18 +440,18 @@ cuisine_pref = st.sidebar.multiselect(
     ],
 )
 
-# Diet preference
+
 diet_pref = st.sidebar.selectbox(
     "Diet",
     ["no preference", "veg", "vegan", "egg-veg", "omnivore"],
 )
 
-# Time
+
 time_limit = st.sidebar.slider("Time limit (minutes)", 10, 60, 25)
 
 st.sidebar.markdown("---")
 
-# Ingredient categories as multiselect checklists
+
 veggies = sorted({
     "onion", "red onion", "spring onion", "garlic", "ginger", "green chilli", "chilli flakes",
     "tomato", "bell pepper", "capsicum", "carrot", "peas", "corn", "mushroom",
@@ -589,9 +480,6 @@ sel_others = st.sidebar.multiselect("Others", others)
 st.sidebar.markdown("---")
 run = st.sidebar.button("Suggest Recipes", use_container_width=True)
 
-# ----------------------
-# Scoring Logic
-# ----------------------
 
 def coverage_score(have: Set[str], need: List[str]) -> float:
     if not need:
@@ -649,9 +537,7 @@ def render_recipe(r: Recipe, have_by_cat: Dict[str, Set[str]]):
 
     st.markdown(f"[🔗 Related YouTube videos]({youtube_link(r.title, r.cuisine)})")
 
-# ---------------
-# Main Area
-# ---------------
+
 col1, col2 = st.columns([1, 2])
 with col1:
     st.markdown("### Selected Ingredients")
