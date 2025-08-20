@@ -4,13 +4,37 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-st.markdown("""
+# Hide ONLY the "Fork" control(s) in the top toolbar; keep the left chevron
+st.markdown(
+    """
     <style>
-        /* Hide the "Fork this app" button */
-        [data-testid="stActionButtonIcon"] {display: none !important;}
-        [title="Fork this app"] {display: none !important;}
+      /* Keep the toolbar visible so the sidebar chevron still works */
+      header [data-testid="stToolbar"] { display: flex !important; align-items: center; }
+
+      /* 1) Common cases: button/anchor with title or aria-label containing 'Fork' */
+      header [data-testid="stToolbar"] [title*="Fork" i],
+      header [data-testid="stToolbar"] [aria-label*="Fork" i] {
+        display: none !important; visibility: hidden !important; pointer-events: none !important;
+      }
+
+      /* 2) Older builds: generic action icon wrapper */
+      header [data-testid="stToolbar"] [data-testid="stActionButtonIcon"] {
+        display: none !important; visibility: hidden !important; pointer-events: none !important;
+      }
+
+      /* 3) Fallback: if Fork is rendered as a labeled button */
+      header [data-testid="stToolbar"] button:has(svg[aria-label*="fork" i]),
+      header [data-testid="stToolbar"] button:has(span:contains("Fork")) {
+        display: none !important; visibility: hidden !important; pointer-events: none !important;
+      }
+
+      /* Ensure other right-side items (e.g., ⋮, GitHub) also disappear if you want */
+      /* Uncomment the next line to hide everything on the right side except the first child (the chevron) */
+      /* header [data-testid="stToolbar"] > *:not(:first-child) { display: none !important; } */
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
