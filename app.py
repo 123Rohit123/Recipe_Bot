@@ -27,7 +27,7 @@ components.html(
           }
           return false;
         };
-
+    """
 )
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
