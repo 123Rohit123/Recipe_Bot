@@ -4,31 +4,6 @@ from typing import List, Dict, Set
 import urllib.parse
 
 st.set_page_config(page_title="Recipe Bot", page_icon="🥘", layout="wide")
-import streamlit as st
-import streamlit.components.v1 as components
-
-# keep toolbar so the left chevron works; then surgically remove items with JS
-components.html(
-    """
-    <script>
-      function hideToolbarStuff() {
-        const toolbar = parent.document.querySelector('header [data-testid="stToolbar"]');
-        if (!toolbar) return;
-
-        // Remove buttons/links that say Fork / GitHub / overflow menu
-        const kill = (el) => {
-          if (!el) return false;
-          const t = ((el.getAttribute('title')||'') + ' ' +
-                     (el.getAttribute('aria-label')||'') + ' ' +
-                     (el.textContent||'')).toLowerCase();
-          if (t.includes('fork') || t.includes('github')) {
-            el.style.display = 'none';
-            return true;
-          }
-          return false;
-        };
-    """
-)
 st.title("🥘 Recipe Bot")
 st.caption("Pick what you have. I’ll suggest recipes with steps and a related YouTube video.")
 
